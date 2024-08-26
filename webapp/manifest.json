@@ -1,0 +1,206 @@
+{
+  "_version": "1.59.0",
+  "sap.app": {
+    "id": "tanabe.cashmanagement.filecontentreport",
+    "type": "application",
+    "i18n": "i18n/i18n.properties",
+    "applicationVersion": {
+      "version": "1.0.0"
+    },
+    "title": "{{appTitle}}",
+    "description": "{{appDescription}}",
+    "resources": "resources.json",
+    "sourceTemplate": {
+      "id": "@sap/generator-fiori:lrop",
+      "version": "1.14.4",
+      "toolsId": "10bf865e-fe3c-415e-9170-4663688b76f8"
+    },
+    "dataSources": {
+      "mainService": {
+        "uri": "/FileManagement/",
+        "type": "OData",
+        "settings": {
+          "annotations": [
+            "annotation"
+          ],
+          "localUri": "localService/metadata.xml",
+          "odataVersion": "4.0"
+        }
+      },
+      "annotation": {
+        "type": "ODataAnnotation",
+        "uri": "annotations/annotation.xml",
+        "settings": {
+          "localUri": "annotations/annotation.xml"
+        }
+      }
+    },
+    "crossNavigation": {
+      "inbounds": {
+        "FileContentReport-Display": {
+          "semanticObject": "FileContentReport",
+          "action": "Display",
+          "icon": "sap-icon://course-program",
+          "info": "CAP/Hana",          
+          "title": "{{flpTitle}}",
+          "subTitle": "{{flpSubtitle}}",
+          "signature": {
+            "parameters": {},
+            "additionalParameters": "allowed"
+          }
+        }
+      }
+    }
+  },
+  "sap.ui": {
+    "technology": "UI5",
+    "icons": {
+      "icon": "",
+      "favIcon": "",
+      "phone": "",
+      "phone@2": "",
+      "tablet": "",
+      "tablet@2": ""
+    },
+    "deviceTypes": {
+      "desktop": true,
+      "tablet": true,
+      "phone": true
+    }
+  },
+  "sap.ui5": {
+    "flexEnabled": true,
+    "dependencies": {
+      "minUI5Version": "1.127.1",
+      "libs": {
+        "sap.m": {},
+        "sap.ui.core": {},
+        "sap.ushell": {},
+        "sap.fe.templates": {}
+      }
+    },
+    "contentDensities": {
+      "compact": true,
+      "cozy": true
+    },
+    "models": {
+      "i18n": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "settings": {
+          "bundleName": "tanabe.cashmanagement.filecontentreport.i18n.i18n"
+        }
+      },
+      "": {
+        "dataSource": "mainService",
+        "preload": true,
+        "settings": {
+          "operationMode": "Server",
+          "autoExpandSelect": true,
+          "earlyRequests": true
+        }
+      },
+      "@i18n": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "uri": "i18n/i18n.properties"
+      }
+    },
+    "resources": {
+      "css": []
+    },
+    "routing": {
+      "config": {},
+      "routes": [
+        {
+          "pattern": ":?query:",
+          "name": "FileHeaderList",
+          "target": "FileHeaderList"
+        },
+        {
+          "pattern": "FileHeader({key}):?query:",
+          "name": "FileHeaderObjectPage",
+          "target": "FileHeaderObjectPage"
+        },
+        {
+          "pattern": "FileHeader({key})/items({key2}):?query:",
+          "name": "FileContentObjectPage",
+          "target": "FileContentObjectPage"
+        }
+      ],
+      "targets": {
+        "FileHeaderList": {
+          "type": "Component",
+          "id": "FileHeaderList",
+          "name": "sap.fe.templates.ListReport",
+          "options": {
+            "settings": {
+              "contextPath": "/FileHeader",
+              "variantManagement": "Page",
+              "navigation": {
+                "FileHeader": {
+                  "detail": {
+                    "route": "FileHeaderObjectPage"
+                  }
+                }
+              },
+              "controlConfiguration": {
+                "@com.sap.vocabularies.UI.v1.LineItem": {
+                  "tableSettings": {
+                    "type": "ResponsiveTable",
+                    "condensedTableLayout": false
+                  }
+                }
+              }
+            }
+          }
+        },
+        "FileHeaderObjectPage": {
+          "type": "Component",
+          "id": "FileHeaderObjectPage",
+          "name": "sap.fe.templates.ObjectPage",
+          "options": {
+            "settings": {
+              "editableHeaderContent": false,
+              "contextPath": "/FileHeader",
+              "navigation": {
+                "items": {
+                  "detail": {
+                    "route": "FileContentObjectPage"
+                  }
+                }
+              },
+              "controlConfiguration": {
+                "items/@com.sap.vocabularies.UI.v1.LineItem#FileContent": {
+                  "tableSettings": {
+                    "condensedTableLayout": true,
+                    "enableExport": true,
+                    "enableFullScreen": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "FileContentObjectPage": {
+          "type": "Component",
+          "id": "FileContentObjectPage",
+          "name": "sap.fe.templates.ObjectPage",
+          "options": {
+            "settings": {
+              "editableHeaderContent": false,
+              "contextPath": "/FileHeader/items",
+              "sectionLayout": "Page"
+            }
+          }
+        }
+      }
+    }
+  },
+  "sap.fiori": {
+    "registrationIds": [],
+    "archeType": "transactional"
+  },
+  "sap.cloud": {
+    "public": true,
+    "service": "tanabecashmanagementfilecontentreport"
+  }
+}

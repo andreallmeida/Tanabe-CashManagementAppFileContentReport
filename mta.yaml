@@ -1,0 +1,94 @@
+_schema-version: "3.2"
+ID: tanabecashmanagementfilecontentreport
+description: Cash Management File Content Report
+version: 1.0.0
+modules:
+- name: tanabecashmanagementfilecontentreport-destination-content
+  type: com.sap.application.content
+  requires:
+  - name: tanabecashmanagementfilecontentreport-destination-service
+    parameters:
+      content-target: true
+  - name: tanabecashmanagementfilecontentreport-repo-host
+    parameters:
+      service-key:
+        name: tanabecashmanagementfilecontentreport-repo-host-key
+  - name: tanabecashmanagementfilecontentreport-uaa
+    parameters:
+      service-key:
+        name: tanabecashmanagementfilecontentreport-uaa-key
+  parameters:
+    content:
+      instance:
+        destinations:
+        - Name: tanabecashmanagementfilecontentreport_html_repo_host
+          ServiceInstanceName: tanabecashmanagementfilecontentreport-html5-srv
+          ServiceKeyName: tanabecashmanagementfilecontentreport-repo-host-key
+          sap.cloud.service: tanabecashmanagementfilecontentreport
+        - Authentication: OAuth2UserTokenExchange
+          Name: tanabecashmanagementfilecontentreport_uaa
+          ServiceInstanceName: tanabecashmanagementfilecontentreport-xsuaa-srv
+          ServiceKeyName: tanabecashmanagementfilecontentreport-uaa-key
+          sap.cloud.service: tanabecashmanagementfilecontentreport
+        existing_destinations_policy: ignore
+  build-parameters:
+    no-source: true
+- name: tanabecashmanagementfilecontentreport-app-content
+  type: com.sap.application.content
+  path: .
+  requires:
+  - name: tanabecashmanagementfilecontentreport-repo-host
+    parameters:
+      content-target: true
+  build-parameters:
+    build-result: resources
+    requires:
+    - artifacts:
+      - tanabecashmanagementfilecontentreport.zip
+      name: tanabecashmanagementfilecontentreport
+      target-path: resources/
+- name: tanabecashmanagementfilecontentreport
+  type: html5
+  path: .
+  build-parameters:
+    build-result: dist
+    builder: custom
+    commands:
+    - npm install
+    - npm run build:cf
+    supported-platforms: []
+resources:
+- name: tanabecashmanagementfilecontentreport-destination-service
+  type: org.cloudfoundry.managed-service
+  parameters:
+    config:
+      HTML5Runtime_enabled: true
+      init_data:
+        instance:
+          destinations:
+          - Authentication: NoAuthentication
+            Name: ui5
+            ProxyType: Internet
+            Type: HTTP
+            URL: https://ui5.sap.com
+          existing_destinations_policy: update
+      version: 1.0.0
+    service: destination
+    service-name: tanabecashmanagementfilecontentreport-destination-service
+    service-plan: lite
+- name: tanabecashmanagementfilecontentreport-uaa
+  type: org.cloudfoundry.managed-service
+  parameters:
+    path: ./xs-security.json
+    service: xsuaa
+    service-name: tanabecashmanagementfilecontentreport-xsuaa-srv
+    service-plan: application
+- name: tanabecashmanagementfilecontentreport-repo-host
+  type: org.cloudfoundry.managed-service
+  parameters:
+    service: html5-apps-repo
+    service-name: tanabecashmanagementfilecontentreport-html5-srv
+    service-plan: app-host
+parameters:
+  deploy_mode: html5-repo
+  enable-parallel-deployments: true
